@@ -1,467 +1,373 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema",
-  "title": "Marvin Workflows schema",
-  "description": "Marvin Workflows graph data description. Please note that all field keys use lower camel case. You may need to provide additional validation programmatically to confirm that the metadata you need for your application exists.",
-  "type": "object",
-  "properties": {
-    "$schema": {
-      "type": "string",
-      "format": "uri"
-    },
-    "graph": {
-      "$ref": "#/definitions/graph"
-    }
-  },
-  "additionalProperties": false,
-  "required": [
-    "graph"
-  ],
-  "definitions": {
-    "simpleTypes": {
-      "enum": [
-        "boolean",
-        "integer",
-        "null",
-        "number",
-        "string"
-      ]
-    },
-    "extendedSimpleTypes": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/simpleTypes"
-        },
-        {
-          "enum": [
-            "array",
-            "object"
-          ]
-        }
-      ]
-    },
-    "operatorTypes": {
-      "enum": [
-        "==",
-        "!=",
-        ">",
-        "<",
-        ">=",
-        "<="
-      ]
-    },
-    "anyType": {
-      "anyOf": [
-        {
-          "$ref": "#/definitions/extendedSimpleTypes"
-        },
-        {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/extendedSimpleTypes"
-          },
-          "minItems": 1,
-          "uniqueItems": true
-        }
-      ]
-    },
-    "propertySimpleValue": {
-      "allOf": [
-        {
-          "property": {
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "title": "Marvin Workflows schema",
+    "description": "Marvin Workflows graph data description. Please note that all field keys use lower camel case. You may need to provide additional validation programmatically to confirm that the metadata you need for your application exists.",
+    "type": "object",
+    "properties": {
+        "$schema": {
             "type": "string",
-            "title": "Property Name",
-            "description": "Property name"
-          }
+            "format": "uri"
         },
-        {
-          "oneOf": [
-            {
-              "const": {
-                "$ref": "#/definitions/simpleTypes"
-              }
-            },
-            {
-              "reference": {
-                "type": "string"
-              }
-            }
-          ]
-        }
-      ]
+        "graph": { "$ref": "#/definitions/graph" }
     },
-    "propertyValue": {
-      "allOf": [
-        {
-          "property": {
-            "type": "string",
-            "title": "Property Name",
-            "description": "Property name"
-          }
+    "additionalProperties": false,
+    "required": [
+        "graph"
+    ],
+    "definitions": {
+        "simpleTypes": {
+            "enum": [
+                "boolean",
+                "integer",
+                "null",
+                "number",
+                "string"
+            ]
         },
-        {
-          "oneOf": [
-            {
-              "const": {
-                "$ref": "#/definitions/anyType"
-              }
-            },
-            {
-              "reference": {
-                "type": "string"
-              }
-            }
-          ]
-        }
-      ]
-    },
-    "graphMetadata": {
-      "type": "object",
-      "additionalProperties": true,
-      "properties": {
-        "version": {
-          "type": "string",
-          "title": "Version of Workflow Template",
-          "description": "Version of workflow template"
-        },
-        "templateId": {
-          "type": "string",
-          "title": "Workflow Template Identity",
-          "description": "Workflow template identity"
-        },
-        "title": {
-          "type": "string",
-          "title": "Workflow Title",
-          "description": "Workflow title"
-        },
-        "description": {
-          "type": "string",
-          "title": "Workflow Description",
-          "description": "Workflow description"
-        },
-        "author": {
-          "type": "string",
-          "title": "Workflow Set Author",
-          "description": "Workflow set author"
-        }
-      },
-      "required": [
-        "version",
-        "templateId",
-        "title"
-      ]
-    },
-    "workflowBasicNode": {
-      "type": "object",
-      "additionalProperties": true,
-      "title": "The Basic Node Definition",
-      "description": "The basic node definition",
-      "properties": {
-        "title": {
-          "type": "string",
-          "title": "Marvin Workflows Node Title",
-          "description": "Marvin Workflows node title"
-        },
-        "description": {
-          "type": "string",
-          "title": "Marvin Workflows Node Description",
-          "description": "Marvin Workflows node description"
-        }
-      }
-    },
-    "triggerType": {
-      "type": "object",
-      "additionalProperties": false,
-      "title": "Trigger Type",
-      "description": "Properties for a trigger node",
-      "properties": {
-        "type": {
-          "enum": [
-            "event",
-            "cron"
-          ]
-        },
-        "data": {
-          "type": "string",
-          "title": "Information about The Trigger",
-          "description": "Information about the trigger"
-        }
-      }
-    },
-    "triggerSources": {
-      "type": "array",
-      "title": "Trigger Sources",
-      "description": "Sources of a trigger",
-      "items": {
-        "$ref": "#/definitions/triggerType"
-      }
-    },
-    "workflowTriggerNode": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/workflowBasicNode"
-        },
-        {
-          "sources": {
-            "$ref": "#/definitions/triggerSources"
-          }
-        }
-      ]
-    },
-    "script": {
-      "type": "object",
-      "additionalProperties": true,
-      "title": "Script to Execute",
-      "description": "Script to execute",
-      "properties": {
-        "id": {
-          "type": "string",
-          "title": "Script Identity",
-          "description": "Script identity"
-        },
-        "uri": {
-          "type": "string",
-          "title": "URI for retrieving Script Information",
-          "description": "URI for retrieving script information including version, binary location, schema and so on"
-        }
-      },
-      "required": [
-        "id"
-      ]
-    },
-    "workflowScript": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/workflowBasicNode"
-        },
-        {
-          "script": {
-            "$ref": "#/definitions/script"
-          }
-        }
-      ]
-    },
-    "grapdNodeMetadata": {
-      "anyOf": [
-        {
-          "allOf": [
-            {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "const": "trigger"
+        "extendedSimpleTypes": {
+            "allOf": [
+                { "$ref": "#/definitions/simpleTypes" },
+                {
+                    "enum": [
+                        "array",
+                        "object"
+                    ]
                 }
-              }
-            },
-            {
-              "$ref": "#/definitions/workflowTriggerNode"
-            }
-          ]
+            ]
         },
-        {
-          "allOf": [
-            {
-              "tyep": "object",
-              "properties": {
-                "type": {
-                  "const": "action"
+        "operatorTypes": {
+            "enum": [
+                "==",
+                "!=",
+                ">",
+                "<",
+                ">=",
+                "<="
+            ]
+        },
+        "anyType": {
+            "anyOf": [
+                { "$ref": "#/definitions/extendedSimpleTypes" },
+                {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/extendedSimpleTypes" },
+                    "minItems": 1,
+                    "uniqueItems": true
                 }
-              }
-            },
-            {
-              "$ref": "#/definitions/workflowScript"
-            }
-          ]
+            ]
         },
-        {
-          "allOf": [
-            {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "const": "selector"
+        "propertySimpleValue": {
+            "allOf": [
+                {
+                    "property": {
+                        "type": "string",
+                        "title": "Property Name",
+                        "description": "Property name"
+                    }
+                },
+                {
+                    "oneOf": [
+                        { "const": { "$ref": "#/definitions/simpleTypes" } },
+                        { "reference": { "type": "string" } }
+                    ]
                 }
-              }
-            },
-            {
-              "$ref": "#/definitions/workflowBasicNode"
-            }
-          ]
+            ]
         },
-        {
-          "allOf": [
-            {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "const": "terminator"
+        "propertyValue": {
+            "allOf": [
+                {
+                    "property": {
+                        "type": "string",
+                        "title": "Property Name",
+                        "description": "Property name"
+                    }
+                },
+                {
+                    "oneOf": [
+                        { "const": { "$ref": "#/definitions/anyType" } },
+                        { "reference": { "type": "string" } }
+                    ]
                 }
-              }
-            },
-            {
-              "$ref": "#/definitions/workflowScript"
-            }
-          ]
+            ]
         },
-        {
-          "allOf": [
-            {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "const": "exception"
-                }
-              }
-            },
-            {
-              "$ref": "#/definitions/workflowScript"
-            }
-          ]
-        }
-      ]
-    },
-    "graphNodes": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "Node Identity",
-            "description": "Unique identity of a node"
-          },
-          "metadata": {
-            "$ref": "#/definitions/grapdNodeMetadata"
-          }
-        },
-        "required": [
-          "id"
-        ]
-      }
-    },
-    "filterBasicRule": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/propertySimpleValue"
-        },
-        {
-          "operator": {
-            "$ref": "#/definitions/operatorTypes"
-          }
-        }
-      ]
-    },
-    "filterLogicalRule": {
-      "type": "array",
-      "items": {
-        "anyOf": [
-          {
-            "$ref": "#/definitions/filterBasicRule"
-          },
-          {
-            "and": {
-              "$ref": "#/definitions/filterLogicalRule"
-            }
-          },
-          {
-            "or": {
-              "$ref": "#/definitions/filterLogicalRule"
-            }
-          },
-          {
-            "not": {
-              "$ref": "#/definitions/filterLogicalRule"
-            }
-          }
-        ]
-      }
-    },
-    "filterRule": {
-      "anyOf": [
-        {
-          "$ref": "#/definitions/filterBasicRule"
-        },
-        {
-          "and": {
-            "$ref": "#/definitions/filterLogicalRule"
-          }
-        },
-        {
-          "or": {
-            "$ref": "#/definitions/filterLogicalRule"
-          }
-        },
-        {
-          "not": {
-            "$ref": "#/definitions/filterLogicalRule"
-          }
-        }
-      ]
-    },
-    "graphEdges": {
-      "type": [
-        "array",
-        null
-      ],
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "source": {
-            "type": "string",
-            "title": "Identity of Source Node",
-            "description": "First node in edge triple"
-          },
-          "target": {
-            "type": "string",
-            "title": "Identity of Target Node",
-            "description": "Second node in edge triple"
-          },
-          "metadata": {
-            "type": [
-              "object",
-              null
-            ],
+        "graphMetadata": {
+            "type": "object",
             "additionalProperties": true,
             "properties": {
-              "filters": {
-                "$ref": "#/definitions/filterRule"
-              },
-              "binding": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/definitions/propertyValue"
+                "version": {
+                    "type": "string",
+                    "title": "Version of Workflow Template",
+                    "description": "Version of workflow template"
+                },
+                "templateId": {
+                    "type": "string",
+                    "title": "Workflow Template Identity",
+                    "description": "Workflow template identity"
+                },
+                "title": {
+                    "type": "string",
+                    "title": "Workflow Title",
+                    "description": "Workflow title"
+                },
+                "description": {
+                    "type": "string",
+                    "title": "Workflow Description",
+                    "description": "Workflow description"
+                },
+                "author": {
+                    "type": "string",
+                    "title": "Workflow Set Author",
+                    "description": "Workflow set author"
                 }
-              }
+            },
+            "required": [
+                "version",
+                "templateId",
+                "title"
+            ]
+        },
+        "workflowBasicNode": {
+            "type": "object",
+            "additionalProperties": true,
+            "title": "The Basic Node Definition",
+            "description": "The basic node definition",
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "title": "Marvin Workflows Node Title",
+                    "description": "Marvin Workflows node title"
+                },
+                "description": {
+                    "type": "string",
+                    "title": "Marvin Workflows Node Description",
+                    "description": "Marvin Workflows node description"
+                }
             }
-          }
         },
-        "required": [
-          "source",
-          "target"
-        ]
-      }
-    },
-    "graph": {
-      "type": "object",
-      "additionalProperties": false,
-      "title": "Workflow data",
-      "properties": {
-        "metadata": {
-          "$ref": "#/definitions/graphMetadata"
+        "triggerType": {
+            "type": "object",
+            "additionalProperties": false,
+            "title": "Trigger Type",
+            "description": "Properties for a trigger node",
+            "properties": {
+                "type": {
+                    "enum": [
+                        "event",
+                        "cron"
+                    ]
+                },
+                "data": {
+                    "type": "string",
+                    "title": "Information about The Trigger",
+                    "description": "Information about the trigger"
+                }
+            }
         },
-        "nodes": {
-          "$ref": "#/definitions/graphNodes"
+        "triggerSources": {
+            "type": "array",
+            "title": "Trigger Sources",
+            "description": "Sources of a trigger",
+            "items": { "$ref": "#/definitions/triggerType" }
         },
-        "edges": {
-          "$ref": "#/definitions/graphEdges"
+        "workflowTriggerNode": {
+            "allOf": [
+                { "$ref": "#/definitions/workflowBasicNode" },
+                { "sources": { "$ref": "#/definitions/triggerSources" } }
+            ]
+        },
+        "script": {
+            "type": "object",
+            "additionalProperties": true,
+            "title": "Script to Execute",
+            "description": "Script to execute",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "title": "Script Identity",
+                    "description": "Script identity"
+                },
+                "uri": {
+                    "type": "string",
+                    "title": "URI for retrieving Script Information",
+                    "description": "URI for retrieving script information including version, binary location, schema and so on"
+                }
+            },
+            "required": [
+                "id"
+            ]
+        },
+        "workflowScript": {
+            "allOf": [
+                { "$ref": "#/definitions/workflowBasicNode" },
+                { "script": { "$ref": "#/definitions/script" } }
+            ]
+        },
+        "grapdNodeMetadata": {
+            "anyOf": [
+                {
+                    "allOf": [
+                        {
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "const": "trigger"
+                                }
+                            }
+                        },
+                        { "$ref": "#/definitions/workflowTriggerNode" }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "tyep": "object",
+                            "properties": {
+                                "type": {
+                                    "const": "action"
+                                }
+                            }
+                        },
+                        { "$ref": "#/definitions/workflowScript" }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "const": "selector"
+                                }
+                            }
+                        },
+                        { "$ref": "#/definitions/workflowBasicNode" }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "const": "terminator"
+                                }
+                            }
+                        },
+                        { "$ref": "#/definitions/workflowScript" }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "const": "exception"
+                                }
+                            }
+                        },
+                        { "$ref": "#/definitions/workflowScript" }
+                    ]
+                }
+            ]
+        },
+        "graphNodes": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "title": "Node Identity",
+                        "description": "Unique identity of a node"
+                    },
+                    "metadata": { "$ref": "#/definitions/grapdNodeMetadata" }
+                },
+                "required": [
+                    "id"
+                ]
+            }
+        },
+        "filterBasicRule": {
+            "allOf": [
+                { "$ref": "#/definitions/propertySimpleValue" },
+                { "operator": { "$ref": "#/definitions/operatorTypes" } }
+            ]
+        },
+        "filterLogicalRule": {
+            "type": "array",
+            "items": {
+                "anyOf": [
+                    { "$ref": "#/definitions/filterBasicRule" },
+                    { "and": { "$ref": "#/definitions/filterLogicalRule" } },
+                    { "or": { "$ref": "#/definitions/filterLogicalRule" } },
+                    { "not": { "$ref": "#/definitions/filterLogicalRule" } }
+                ]
+            }
+        },
+        "filterRule": {
+            "anyOf": [
+                { "$ref": "#/definitions/filterBasicRule" },
+                { "and": { "$ref": "#/definitions/filterLogicalRule" } },
+                { "or": { "$ref": "#/definitions/filterLogicalRule" } },
+                { "not": { "$ref": "#/definitions/filterLogicalRule" } }
+            ]
+        },
+        "graphEdges": {
+            "type": [
+                "array",
+                "null"
+            ],
+            "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "source": {
+                        "type": "string",
+                        "title": "Identity of Source Node",
+                        "description": "First node in edge triple"
+                    },
+                    "target": {
+                        "type": "string",
+                        "title": "Identity of Target Node",
+                        "description": "Second node in edge triple"
+                    },
+                    "metadata": {
+                        "type": [
+                            "object",
+                            "null"
+                        ],
+                        "additionalProperties": true,
+                        "properties": {
+                            "filters": { "$ref": "#/definitions/filterRule" },
+                            "binding": {
+                                "type": "array",
+                                "items": { "$ref": "#/definitions/propertyValue" }
+                            }
+                        }
+                    }
+                },
+                "required": [
+                    "source",
+                    "target"
+                ]
+            }
+        },
+        "graph": {
+            "type": "object",
+            "additionalProperties": false,
+            "title": "Workflow data",
+            "properties": {
+                "metadata": { "$ref": "#/definitions/graphMetadata" },
+                "nodes": { "$ref": "#/definitions/graphNodes" },
+                "edges": { "$ref": "#/definitions/graphEdges" }
+            },
+            "required": [
+                "metadata",
+                "nodes",
+                "edges"
+            ]
         }
-      },
-      "required": [
-        "metadata",
-        "nodes",
-        "edges"
-      ]
     }
-  }
 }
